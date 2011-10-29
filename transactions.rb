@@ -63,17 +63,20 @@ class Transactions
 
     # f is actually big decimal
     def bankers_rounding(f)
-        new_f = (f * 1000).to_i / 10.0
-        i = new_f.to_i
-        reminder = new_f - i
-        if reminder == 0.5
-            i = i.odd? ? i+1 : i
-        elsif reminder > 0.5
-            i = i + 1
+        cents     = f * 100
+        remainder = cents % 1
+
+        if remainder == 0
+          f.to_f
+        elsif remainder < 0.5
+          f.round(2, BigDecimal::ROUND_DOWN).to_f
+        elsif remainder > 0.5
+          f.round(2, BigDecimal::ROUND_UP).to_f
+        elsif cents.even?
+          f.round(2, BigDecimal::ROUND_DOWN).to_f
         else
-            i = i
+          f.round(2, BigDecimal::ROUND_UP).to_f
         end
-        i / 100.0
     end
 
         
